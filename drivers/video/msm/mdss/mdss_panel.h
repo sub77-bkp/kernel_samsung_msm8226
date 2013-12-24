@@ -16,6 +16,7 @@
 
 #include <linux/platform_device.h>
 #include <linux/types.h>
+#include <linux/of_device.h>
 #include "dlog.h"
 #if defined(CONFIG_FB_MSM_MDSS_S6E8AA0A_HD_PANEL)
 #include "smart_mtp_s6e8aa0x01.h"
@@ -614,6 +615,9 @@ int mdss_panel_get_boot_cfg(void);
  * returns true if mdss is ready, else returns false.
  */
 bool mdss_is_ready(void);
+
+struct device_node *of_get_child_by_name(const struct device_node *node,
+				const char *name);
 
 int mdss_panel_force_update(struct mdss_panel_data *pdata);
 int load_565rle_image(char *filename);
