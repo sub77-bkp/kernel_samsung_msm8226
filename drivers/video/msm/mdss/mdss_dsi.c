@@ -78,6 +78,9 @@ struct device_node *of_get_child_by_name(const struct device_node *node,
 }
 EXPORT_SYMBOL(of_get_child_by_name);
 
+static int mdss_dsi_pinctrl_set_state(struct mdss_dsi_ctrl_pdata *ctrl_pdata,
+					bool active);
+
 static int mdss_dsi_regulator_init(struct platform_device *pdev)
 {
 	int rc = 0;
@@ -318,23 +321,27 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 
 		if (ctrl_pdata->power_data.num_vreg > 0) {
 
-		for (i = 0; i < DSI_MAX_PM; i++) {
-			/*
-			 * Core power module will be enabled when the
-			 * clocks are enabled
-			 */
-			if (DSI_CORE_PM == i)
-				continue;
-			ret = msm_dss_enable_vreg(
-				ctrl_pdata->power_data[i].vreg_config,
-				ctrl_pdata->power_data[i].num_vreg, 1);
-			if (ret) {
-				pr_err("%s: failed to enable vregs for %s\n",
-					__func__, __mdss_dsi_pm_name(i));
-				goto error_enable;
+			for (i = 0; i < DSI_MAX_PM; i++) {
+				/*
+				 * Core power module will be enabled when the
+				 * clocks are enabled
+				 */
+				if (DSI_CORE_PM == i)
+					continue;
+				ret = msm_dss_enable_vreg(
+					ctrl_pdata->power_data[i].vreg_config,
+					ctrl_pdata->power_data[i].num_vreg, 1);
+				if (ret) {
+					pr_err("%s: failed to enable vregs for %s\n",
+						__func__, __mdss_dsi_pm_name(i));
+					goto error_enable;
+				}
 			}
-		}
+
 			if (ctrl_pdata->panel_extra_power){
+				if (mdss_dsi_pinctrl_set_state(ctrl_pdata, true))
+					pr_debug("extra power enable: pinctrl not enabled\n");
+
 				ret = ctrl_pdata->panel_extra_power(pdata,1);
 
 				if (ret) {
@@ -372,6 +379,9 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 		if (ctrl_pdata->power_data.num_vreg > 0) {
 
 			if (ctrl_pdata->panel_extra_power){
+				if (mdss_dsi_pinctrl_set_state(ctrl_pdata, true))
+					pr_debug("extra power disable: pinctrl not enabled\n");
+
 				  ret = ctrl_pdata->panel_extra_power(pdata,0);
 
 				if (ret) {
@@ -403,22 +413,25 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 			}
 #endif
 
-		for (i = DSI_MAX_PM - 1; i >= 0; i--) {
-			/*
-			 * Core power module will be disabled when the
-			 * clocks are disabled
-			 */
-			if (DSI_CORE_PM == i)
-				continue;
-			ret = msm_dss_enable_vreg(
-				ctrl_pdata->power_data[i].vreg_config,
-				ctrl_pdata->power_data[i].num_vreg, 0);
-			if (ret)
-				pr_err("%s: failed to disable vregs for %s\n",
-					__func__, __mdss_dsi_pm_name(i));
-				return ret;
+		if (mdss_dsi_pinctrl_set_state(ctrl_pdata, false))
+			pr_debug("reset disable: pinctrl not enabled\n");
+
+			for (i = DSI_MAX_PM - 1; i >= 0; i--) {
+				/*
+				 * Core power module will be disabled when the
+				 * clocks are disabled
+			 	*/
+				if (DSI_CORE_PM == i)
+					continue;
+				ret = msm_dss_enable_vreg(
+					ctrl_pdata->power_data[i].vreg_config,
+					ctrl_pdata->power_data[i].num_vreg, 0);
+				if (ret)
+					pr_err("%s: failed to disable vregs for %s\n",
+						__func__, __mdss_dsi_pm_name(i));
+					return ret;
+				}
 			}
-		}
 		}
 
 	}
@@ -1049,6 +1062,59 @@ static int mdss_MTP_read(struct mdss_panel_data *pdata)
 }
 #endif
 
+static int mdss_dsi_pinctrl_set_state(
+	struct mdss_dsi_ctrl_pdata *ctrl_pdata,	
+		bool active)
+{
+	struct pinctrl_state *pin_state;
+	int rc = -EFAULT;
+
+	if (IS_ERR_OR_NULL(ctrl_pdata->pin_res.pinctrl))
+		return PTR_ERR(ctrl_pdata->pin_res.pinctrl);
+
+	pin_state = active ? ctrl_pdata->pin_res.gpio_state_active
+			: ctrl_pdata->pin_res.gpio_state_suspend;
+	if (!IS_ERR_OR_NULL(pin_state)) {
+		rc = pinctrl_select_state(ctrl_pdata->pin_res.pinctrl,
+				pin_state);
+		if (rc)
+			pr_err("%s: can not set %s pins\n", __func__,
+			 	active ? MDSS_PINCTRL_STATE_DEFAULT
+			 	: MDSS_PINCTRL_STATE_SLEEP);
+	} else {
+	pr_err("%s: invalid '%s' pinstate\n", __func__,
+		active ? MDSS_PINCTRL_STATE_DEFAULT
+		: MDSS_PINCTRL_STATE_SLEEP);
+}
+return rc;
+}
+
+static int mdss_dsi_pinctrl_init(struct platform_device *pdev)
+{
+	struct mdss_dsi_ctrl_pdata *ctrl_pdata;	
+
+	ctrl_pdata = platform_get_drvdata(pdev);
+	ctrl_pdata->pin_res.pinctrl = devm_pinctrl_get(&pdev->dev);
+	if (IS_ERR_OR_NULL(ctrl_pdata->pin_res.pinctrl)) {
+		pr_err("%s: failed to get pinctrl\n", __func__);
+		return PTR_ERR(ctrl_pdata->pin_res.pinctrl);
+	}
+
+	ctrl_pdata->pin_res.gpio_state_active
+		= pinctrl_lookup_state(ctrl_pdata->pin_res.pinctrl,
+				MDSS_PINCTRL_STATE_DEFAULT);
+	if (IS_ERR_OR_NULL(ctrl_pdata->pin_res.gpio_state_active))
+		pr_warn("%s: can not get default pinstate\n", __func__);
+
+	ctrl_pdata->pin_res.gpio_state_suspend
+		= pinctrl_lookup_state(ctrl_pdata->pin_res.pinctrl,
+			MDSS_PINCTRL_STATE_SLEEP);
+	if (IS_ERR_OR_NULL(ctrl_pdata->pin_res.gpio_state_suspend))
+		pr_warn("%s: can not get sleep pinstate\n", __func__);
+
+	return 0;
+}
+
 static int mdss_dsi_unblank(struct mdss_panel_data *pdata)
 {
 	int ret = 0;
@@ -1161,6 +1227,7 @@ static int mdss_dsi_blank(struct mdss_panel_data *pdata)
 	}
 error:
 	mdss_dsi_clk_ctrl(ctrl_pdata, DSI_ALL_CLKS, 0);
+
 	pr_debug("%s-:End\n", __func__);
 	return ret;
 }
@@ -1617,6 +1684,10 @@ static int __devinit mdss_dsi_ctrl_probe(struct platform_device *pdev)
 			__func__, rc);
 		goto error_no_mem;
 	}
+
+	rc = mdss_dsi_pinctrl_init(pdev);
+	if (rc)
+		pr_warn("%s: failed to get pin resources\n", __func__); 
 
 	/* Parse the regulator information */
 	for (i = 0; i < DSI_MAX_PM; i++) {

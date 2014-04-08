@@ -20,6 +20,7 @@
 #include "mdss_panel.h"
 #include "mdss_io_util.h"
 #include "mdss_dsi_cmd.h"
+#include <linux/pinctrl/consumer.h>
 
 #define MMSS_SERDES_BASE_PHY 0x04f01000 /* mmss (De)Serializer CFG */
 
@@ -250,6 +251,12 @@ struct dsi_drv_cm_data {
 	int broadcast_enable;
 };
 
+struct dsi_pinctrl_res {
+	struct pinctrl *pinctrl;
+	struct pinctrl_state *gpio_state_active;
+	struct pinctrl_state *gpio_state_suspend;
+};
+
 enum {
 	DSI_CTRL_0,
 	DSI_CTRL_1,
@@ -411,6 +418,7 @@ struct mdss_dsi_ctrl_pdata {
 #if defined(CONFIG_FB_MSM_MDSS_TC_DSI2LVDS_WXGA_PANEL)
 	struct regulator *iovdd_vreg;
 #endif
+	struct dsi_pinctrl_res pin_res;
 };
 
 struct dsi_status_data {
