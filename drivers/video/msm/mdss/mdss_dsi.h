@@ -499,6 +499,7 @@ void mdss_dsi_cmdlist_kickoff(int intf);
 int mdss_dsi_bta_status_check(struct mdss_dsi_ctrl_pdata *ctrl);
 int mdss_dsi_reg_status_check(struct mdss_dsi_ctrl_pdata *ctrl);
 bool __mdss_dsi_clk_enabled(struct mdss_dsi_ctrl_pdata *ctrl, u8 clk_type);
+int mdss_dsi_ulps_config(struct mdss_dsi_ctrl_pdata *ctrl, int enable);
 
 int mdss_dsi_panel_init(struct device_node *node,
 		struct mdss_dsi_ctrl_pdata *ctrl_pdata,
@@ -578,5 +579,11 @@ void mdss_dsi_dump_power_clk(struct mdss_panel_data *pdata, int flag);
 /*for mondrian*/
 void pwm_backlight_enable(void);
 void pwm_backlight_disable(void);
+
+static inline bool mdss_dsi_ulps_feature_enabled(
+	struct mdss_panel_data *pdata)
+{
+	return pdata->panel_info.ulps_feature_enabled;
+}
 
 #endif /* MDSS_DSI_H */

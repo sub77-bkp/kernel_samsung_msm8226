@@ -151,11 +151,6 @@ struct mdss_panel_desc {
  * @MDSS_EVENT_DSI_CMDLIST_KOFF: kickoff sending dcs command from command list
  * @MDSS_EVENT_ENABLE_PARTIAL_UPDATE: Event to update ROI of the panel.
  * @MDSS_EVENT_DSI_CMDLIST_KOFF: acquire dsi_mdp_busy lock before kickoff.
- * @MDSS_EVENT_DSI_ULPS_CTRL:	Event to configure Ultra Lower Power Saving
- *				mode for the DSI data and clock lanes. The
- *				event arguments can have one of these values:
- *				- 0: Disable ULPS mode
- *				- 1: Enable ULPS mode
  * @MDSS_EVENT_DSI_DYNAMIC_SWITCH: Event to update the dsi driver structures
  *				based on the dsi mode passed as argument.
  *				- 0: update to video mode
@@ -184,7 +179,6 @@ enum mdss_intf_events {
 	MDSS_EVENT_DSI_CMDLIST_KOFF,
 	MDSS_EVENT_MDNIE_DEFAULT_UPDATE,
 	MDSS_EVENT_ENABLE_PARTIAL_UPDATE,
-	MDSS_EVENT_DSI_ULPS_CTRL,
 	MDSS_EVENT_REGISTER_RECOVERY_HANDLER,
 	MDSS_EVENT_DSI_DYNAMIC_SWITCH,
 	MDSS_EVENT_BACKLIGHT_LATE_ON,
