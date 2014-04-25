@@ -3390,16 +3390,22 @@ static int hdmi_tx_panel_event_handler(struct mdss_panel_data *panel_data,
 		break;
 
 	case MDSS_EVENT_BLANK:
+		if (hdmi_ctrl->hdcp_feature_on && hdmi_ctrl->present_hdcp) {
+			DEV_DBG("%s: Turning off HDCP\n", __func__);
+			hdmi_hdcp_off(
+				hdmi_ctrl->feature_data[HDMI_TX_FEAT_HDCP]);
+		}
+		break;
+
+	case MDSS_EVENT_PANEL_OFF:
 		if (hdmi_ctrl->panel_power_on) {
 			rc = hdmi_tx_power_off(panel_data);
 			if (rc)
 				DEV_ERR("%s: hdmi_tx_power_off failed.rc=%d\n",
 					__func__, rc);
-
 		} else {
 			DEV_DBG("%s: hdmi is already powered off\n", __func__);
 		}
-		break;
 
 	case MDSS_EVENT_PANEL_OFF:
 #if defined (CONFIG_VIDEO_MHL_V2) || defined (CONFIG_VIDEO_MHL_SII8246)
