@@ -1732,8 +1732,6 @@ static int mdss_mdp_overlay_play(struct msm_fb_data_type *mfd,
 	}
 
 	if (req->id & MDSS_MDP_ROT_SESSION_MASK) {
-		mdss_mdp_overlay_force_dma_cleanup(mfd_to_mdata(mfd));
-
 		ret = mdss_mdp_rotator_play(mfd, req);
 	} else if (req->id == BORDERFILL_NDX) {
 		pr_debug("borderfill enable\n");
