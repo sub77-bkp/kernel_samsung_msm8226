@@ -52,6 +52,7 @@
 
 #define MAX_AF_ITERATIONS 3
 #define MAX_NUMBER_OF_STEPS 47
+#define MAX_POWER_CONFIG 12
 
 //************************************* Native functionalities for YUV sensor added by jai.prakash
 #define EXT_CAM_EV			1
