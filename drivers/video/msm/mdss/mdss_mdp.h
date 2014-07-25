@@ -225,6 +225,7 @@ struct mdss_mdp_ctl {
 					struct mdss_mdp_vsync_handler *);
 	int (*config_fps_fnc) (struct mdss_mdp_ctl *ctl,
 				struct mdss_mdp_ctl *sctl, int new_fps);
+	int (*restore_fnc) (struct mdss_mdp_ctl *ctl);
 
 	struct blocking_notifier_head notifier_head;
 
@@ -761,9 +762,7 @@ void mdss_mdp_underrun_clk_info(void);
 
 int mdss_mdp_wb_set_secure(struct msm_fb_data_type *mfd, int enable);
 int mdss_mdp_wb_get_secure(struct msm_fb_data_type *mfd, uint8_t *enable);
-void mdss_mdp_ctl_restore(struct mdss_mdp_ctl *ctl);
-int mdss_mdp_footswitch_ctrl_idle_pc(int on, struct device *dev);
-
+void mdss_mdp_ctl_restore(void);
 int mdss_mdp_pipe_program_pixel_extn(struct mdss_mdp_pipe *pipe);
 #define mfd_to_mdp5_data(mfd) (mfd->mdp.private1)
 #define mfd_to_mdata(mfd) (((struct mdss_overlay_private *)\
@@ -772,7 +771,6 @@ int mdss_mdp_pipe_program_pixel_extn(struct mdss_mdp_pipe *pipe);
 				(mfd->mdp.private1))->ctl)
 #define mfd_to_wb(mfd) (((struct mdss_overlay_private *)\
 				(mfd->mdp.private1))->wb)
-
 int mdss_mdp_ctl_reset(struct mdss_mdp_ctl *ctl);
 #if defined(CONFIG_FB_MSM_MIPI_SAMSUNG_OCTA_CMD_FULL_HD_PT_PANEL)
 void mdss_dsi_debug_check_te(struct mdss_panel_data *pdata);

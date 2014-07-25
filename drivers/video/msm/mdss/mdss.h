@@ -218,6 +218,7 @@ struct mdss_data_type {
 	bool idle_pc;
 	struct mdss_perf_tune perf_tune;
 	int iommu_ref_cnt;
+	atomic_t active_intf_cnt;
 
 	u64 ab[MDSS_MAX_HW_BLK];
 	u64 ib[MDSS_MAX_HW_BLK];
