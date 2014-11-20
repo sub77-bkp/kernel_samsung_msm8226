@@ -716,6 +716,13 @@ int mdss_mdp_perf_bw_check(struct mdss_mdp_ctl *ctl,
 
 	__mdss_mdp_perf_calc_ctl_helper(ctl, &perf,
 			left_plist, left_cnt, right_plist, right_cnt);
+	ctl->bw_pending = perf.bw_ctl;
+
+	for (i = 0; i < mdata->nctl; i++) {
+		struct mdss_mdp_ctl *temp = mdata->ctl_off + i;
+		if (temp->power_on && (temp->intf_type != MDSS_MDP_NO_INTF))
+			bw_sum_of_intfs += temp->bw_pending;
+	}
 
 	ctl->bw_pending = perf.bw_ctl;
  
@@ -730,9 +737,10 @@ int mdss_mdp_perf_bw_check(struct mdss_mdp_ctl *ctl,
 	pr_debug("calculated bandwidth=%uk\n", bw);
 
 	threshold = (ctl->is_video_mode ||
-	mdss_mdp_video_mode_intf_connected(ctl)) ?
-	mdata->max_bw_low : mdata->max_bw_high;
+		mdss_mdp_video_mode_intf_connected(ctl)) ?
+		mdata->max_bw_low : mdata->max_bw_high;
 	if (bw > threshold) {
+		ctl->bw_pending = 0;
 		pr_debug("exceeds bandwidth: %ukb > %ukb\n", bw, threshold);
 		return -E2BIG;
 	}
