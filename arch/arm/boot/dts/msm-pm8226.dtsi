@@ -132,6 +132,8 @@
 			sec,poweroff-check-soc = <1>;
 			sec,update-time = <60>;
 			sec,sleep-update-time = <300>;
+			qcom,chg-iadc = <&pm8226_iadc>;
+			qcom,ibat-calibration-enabled;
 
 			qcom,chgr@1000 {
 				status = "disabled";
