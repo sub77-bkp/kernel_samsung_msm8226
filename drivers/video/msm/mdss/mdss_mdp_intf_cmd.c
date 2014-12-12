@@ -993,7 +993,6 @@ int mdss_mdp_cmd_stop(struct mdss_mdp_ctl *ctl)
 					(MDSS_MDP_IRQ_PING_PONG_RD_PTR,
 							ctx->pp_num);
 				ctx->rdptr_enabled = 0;
-
 			}
 		}
 	}
