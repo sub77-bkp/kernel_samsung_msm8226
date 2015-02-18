@@ -499,6 +499,10 @@ else ifeq ($(CONFIG_MACH_T10_WIFI_OPEN),y)
 	 dtb-$(CONFIG_ARCH_MSM8226)     += msm8226-sec-t10_wifi-r00.dtb
 	 dtb-$(CONFIG_ARCH_MSM8226)     += msm8226-sec-t10_wifi-r01.dtb
 endif
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-320p-w-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-320p-w-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-320p-w-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-320p-w-cdp.dtb
 
 # FSM9XXX
    zreladdr-$(CONFIG_ARCH_FSM9XXX)	:= 0x10008000
