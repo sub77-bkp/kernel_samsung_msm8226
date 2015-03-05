@@ -38,6 +38,7 @@ struct synaptics_dsx_cap_button_map {
  * @irq_flags: irq flags
  * @panel_x: x-axis resolution of display panel
  * @panel_y: y-axis resolution of display panel
+ * @is_wake: keep awake in suspend
  * @gpio_config: pointer to gpio configuration function
  * @cap_button_map: pointer to 0d button map
  */
@@ -46,6 +47,7 @@ struct synaptics_dsx_platform_data {
 	bool y_flip;
 	bool swap_axes;
 	bool regulator_en;
+	bool is_wake;
 	unsigned long irq_flags;
 	unsigned int panel_x;
 	unsigned int panel_y;
