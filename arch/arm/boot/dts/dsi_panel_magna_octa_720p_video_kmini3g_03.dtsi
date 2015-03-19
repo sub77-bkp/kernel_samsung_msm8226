@@ -54,9 +54,9 @@
 					   00 00];
 		qcom,panel-phy-laneConfig = [
 		00 00 00 00 00 00 00 01 97 /* lane0 config */
-		00 00 00 00 05 00 00 01 97 /* lane1 config */
-		00 00 00 00 0a 00 00 01 97 /* lane2 config */
-		00 00 00 00 0f 00 00 01 97 /* lane3 config */
+		00 00 00 00 00 00 00 01 97 /* lane1 config */
+		00 00 00 00 00 00 00 01 97 /* lane2 config */
+		00 00 00 00 00 00 00 01 97 /* lane3 config */
 		00 c0 00 00 00 00 00 01 bb]; /* Clk ln config */
 
 		qcom,panel-on-cmds = [
@@ -508,9 +508,9 @@ samsung,panel-crack-rec-cmds-list = [
 		qcom,platform-regulator-settings = [07 09 03 00 20 00 01];
 		qcom,platform-lane-config = [
 		00 00 00 00 00 00 00 01 97 /* lane0 config */
-		00 00 00 00 05 00 00 01 97 /* lane1 config */
-		00 00 00 00 0a 00 00 01 97 /* lane2 config */
-		00 00 00 00 0f 00 00 01 97 /* lane3 config */
+		00 00 00 00 00 00 00 01 97 /* lane1 config */
+		00 00 00 00 00 00 00 01 97 /* lane2 config */
+		00 00 00 00 00 00 00 01 97 /* lane3 config */
 		00 c0 00 00 00 00 00 01 bb]; /* Clk ln config */
 		qcom,platform-supply-entry1 {
 			qcom,supply-name = "vddio";
