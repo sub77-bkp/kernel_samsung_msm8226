@@ -2746,9 +2746,14 @@ static int hdmi_tx_power_off(struct mdss_panel_data *panel_data)
 	mutex_lock(&hdmi_ctrl->power_mutex);
 	hdmi_ctrl->panel_power_on = false;
 	mutex_unlock(&hdmi_ctrl->power_mutex);
+	mutex_lock(&hdmi_ctrl->mutex);
 	if (hdmi_ctrl->hpd_off_pending) {
-		hdmi_tx_hpd_off(hdmi_ctrl);
 		hdmi_ctrl->hpd_off_pending = false;
+		mutex_unlock(&hdmi_ctrl->mutex);
+		if (!hdmi_ctrl->hpd_state)
+			hdmi_tx_hpd_off(hdmi_ctrl);
+	} else {
+		mutex_unlock(&hdmi_ctrl->mutex);
 	}
 #endif
 
@@ -2986,11 +2991,14 @@ static int hdmi_tx_sysfs_enable_hpd(struct hdmi_tx_ctrl *hdmi_ctrl, int on)
 			INIT_COMPLETION(hdmi_ctrl->hpd_off_done);
 			timeout = wait_for_completion_timeout(
 				&hdmi_ctrl->hpd_off_done, HZ);
-
-			if (!timeout)
+			if (!timeout) {
+				hdmi_ctrl->hpd_off_pending = false;
 				DEV_ERR("%s: hpd off still pending\n",
 					__func__);
+				return 0;
+			}
 		}
+
 		rc = hdmi_tx_hpd_on(hdmi_ctrl);
 	} else {
 		mutex_lock(&hdmi_ctrl->power_mutex);
@@ -3429,7 +3437,7 @@ static int hdmi_tx_panel_event_handler(struct mdss_panel_data *panel_data,
 		break;
 
 	case MDSS_EVENT_CLOSE:
-		if (hdmi_ctrl->hpd_feature_on)
+		if (hdmi_ctrl->hpd_feature_on && !hdmi_ctrl->hpd_state)
 			hdmi_tx_hpd_polarity_setup(hdmi_ctrl,
 				HPD_CONNECT_POLARITY);
 #if defined (CONFIG_VIDEO_MHL_V2) || defined (CONFIG_VIDEO_MHL_SII8246)
