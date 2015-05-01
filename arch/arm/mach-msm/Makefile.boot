@@ -499,6 +499,50 @@ else ifeq ($(CONFIG_MACH_T10_WIFI_OPEN),y)
 	 dtb-$(CONFIG_ARCH_MSM8226)     += msm8226-sec-t10_wifi-r00.dtb
 	 dtb-$(CONFIG_ARCH_MSM8226)     += msm8226-sec-t10_wifi-r01.dtb
 endif
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-sim.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-fluid.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-w-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-w-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-qrd-evt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-qrd-dvt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-720p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-1080p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-720p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-1080p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-evt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-dvt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-720p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-1080p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-720p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-1080p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-qrd.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-qrd-skug.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-qrd-skug-pvt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-720p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-ext-buck-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-720p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-ext-buck-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-qrd.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-qrd-skug.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-qrd-skug-pvt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-qrd-skuf.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-skuf.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v1-xpm.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v1-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v1-w-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v1-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v1-w-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-xpm.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-720p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-1080p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-720p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-1080p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-320p-w-g-mtp.dtb
+>>>>>>> ARM: dts: msm: add device tree support for w-g platform
 	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-320p-w-mtp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-320p-w-cdp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-320p-w-mtp.dtb
@@ -507,6 +551,7 @@ endif
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-320p-w-mtp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)      += msm8926-v1-320p-w-cdp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)      += msm8926-v1-320p-w-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)      += msm8926-v1-320p-w-g.dtb
 
 # FSM9XXX
    zreladdr-$(CONFIG_ARCH_FSM9XXX)	:= 0x10008000

@@ -33,3 +33,4 @@
 /include/ "dsi-panel-s6e88a0-qhd-video.dtsi"
 /include/ "dsi_panel_himax_hx8369b_tft_wvga_video_victor3g.dtsi"
 /include/ "dsi-panel-nt35590-qvga-cmd.dtsi"
+/include/ "dsi-panel-auo-qvga-cmd.dtsi"
