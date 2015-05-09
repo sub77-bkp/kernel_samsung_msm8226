@@ -1157,8 +1157,6 @@ config TOUCHSCREEN_IT7260_I2C
 	  To compile this driver as a module, choose M here: the
 	  module will be called it7258_ts_i2c.
 
-endif
-
 source "drivers/input/touchscreen/wacom/Kconfig"
 source "drivers/input/touchscreen/gt9xx/Kconfig"
 source "drivers/input/touchscreen/synaptics/Kconfig"
@@ -1172,3 +1170,4 @@ source "drivers/input/touchscreen/melfas_mms136/Kconfig"
 source "drivers/input/touchscreen/stm_fts/Kconfig"
 source "drivers/input/touchscreen/stm_s/Kconfig"
 source "drivers/input/touchscreen/synaptics_jsglte/Kconfig"
+endif
