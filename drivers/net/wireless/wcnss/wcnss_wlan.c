@@ -1357,7 +1357,6 @@ EXPORT_SYMBOL(wcnss_get_serial_number);
 
 int wcnss_get_wlan_mac_address(char mac_addr[WLAN_MAC_ADDR_SIZE])
 {
-      return -1;
 	if (!penv)
 		return -ENODEV;
 
