@@ -435,7 +435,9 @@ eHalStatus csrInitChannelsForCC(tpAniSirGlobal pMac, driver_load_type init)
             pMac->scan.domainIdDefault = regId;
             break;
         case REINIT:
+#ifdef CONFIG_ENABLE_LINUX_REG
             vos_getCurrentCountryCode(&cc[0]);
+#endif
             status = csrGetRegulatoryDomainForCountry(pMac,
                      cc, &regId, COUNTRY_QUERY);
             break;
