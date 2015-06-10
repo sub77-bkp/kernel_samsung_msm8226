@@ -128,10 +128,9 @@ struct max77804k_led_platform_data max77804k_led_pdata = {
 	.leds[1].cntrl_mode = MAX77804K_LED_CTRL_BY_FLASHSTB,
 	.leds[1].brightness = 0x06,
 };
-=======
+#endif
 #ifdef CONFIG_KEXEC_HARDBOOT
 #include <linux/memblock.h>
->>>>>>> 9522eb1... Reserve memory for KEXEC_HARDOBOOT in board file.
 #endif
 
 static struct memtype_reserve msm8226_reserve_table[] __initdata = {
