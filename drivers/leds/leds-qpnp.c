@@ -1169,6 +1169,9 @@ static int qpnp_flash_regulator_operate(struct qpnp_led_data *led, bool on)
 
 	if (!regulator_on && !led->flash_cfg->flash_on) {
 		for (i = 0; i < led->num_leds; i++) {
+#ifdef SAMSUNG_USE_EXTERNAL_CHARGER
+			qpnp_flash_reg_en(led, true);
+#else
 			if (led_array[i].flash_cfg->flash_reg_get) {
 				if (led_array[i].flash_cfg->flash_wa_reg_get) {
 					rc = regulator_enable(
@@ -1201,55 +1204,13 @@ static int qpnp_flash_regulator_operate(struct qpnp_led_data *led, bool on)
 						"failed(%d)\n", rc);
 					return rc;
 				}
-				led->flash_cfg->flash_on = true;
-			}
-			break;
-			}
-		for (i = 0; i < led->num_leds; i++) {
-			if (led_array[i].flash_cfg->flash_reg_get) {
-				rc = regulator_enable(
-					led_array[i].flash_cfg->flash_wa_reg);
-				if (rc) {
-					dev_err(&led->spmi_dev->dev,
-						"Flash_wa regulator enable failed(%d)\n",
-								rc);
-					return rc;
-				}
-
-				rc = regulator_enable(
-					led_array[i].flash_cfg->\
-					flash_boost_reg);
-				if (rc) {
-					dev_err(&led->spmi_dev->dev,
-						"Regulator enable failed(%d)\n",
-									rc);
-					return rc;
-				}
-				led->flash_cfg->flash_on = true;
-			}
-			break;
-			}
-	    for (i = 0; i < led->num_leds; i++) {
-#ifdef SAMSUNG_USE_EXTERNAL_CHARGER
-		qpnp_flash_reg_en(led, true);
-#else
-		if (led_array[i].flash_cfg->flash_reg_get) {
-		    rc = regulator_enable(
-			    led_array[i].flash_cfg->\
-			    flash_boost_reg);
-		    if (rc) {
-			dev_err(&led->spmi_dev->dev,
-				"Regulator enable failed(%d)\n",
-				rc);
-			return rc;
-		    }
 #endif
-		    led->flash_cfg->flash_on = true;
+				led->flash_cfg->flash_on = true;
 #ifndef SAMSUNG_USE_EXTERNAL_CHARGER
-		}
+			}
 #endif
-		break;
-	    }
+			break;
+		}
 	}
 
 	return 0;
