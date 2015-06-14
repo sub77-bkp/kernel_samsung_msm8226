@@ -84,7 +84,6 @@ obj-$(CONFIG_TOUCHSCREEN_MMS144)        += mms144.o
 obj-$(CONFIG_TOUCHSCREEN_MMS300)   += mms300.o
 obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT1188S)	+= mxt1188s/
 obj-$(CONFIG_TOUCHSCREEN_GT9XX)		+= gt9xx/
-<<<<<<< HEAD
 obj-$(CONFIG_INPUT_WACOM) += wacom/
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI)	+= synaptics/
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI_G)	+= synaptics/
@@ -101,6 +100,4 @@ obj-$(CONFIG_TOUCHSCREEN_FTS_S) += stm_s/
 obj-$(CONFIG_TOUCHSCREEN_FTS) += stm_fts/
 obj-$(CONFIG_TOUCHSCREEN_ZINITIX_BT532)	+= zinitix_bt532_ts.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI_JSGLTE)	+= synaptics_jsglte/
-=======
 obj-$(CONFIG_TOUCHSCREEN_IT7260_I2C)	+= it7258_ts_i2c.o
->>>>>>> input: Makefile: add support for it7260 touchscreen

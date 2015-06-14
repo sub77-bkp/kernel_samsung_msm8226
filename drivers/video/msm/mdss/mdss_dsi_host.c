@@ -1627,7 +1627,8 @@ int mdss_dsi_cmdlist_rx(struct mdss_dsi_ctrl_pdata *ctrl,
 	return ret;
 }
 
-void mdss_mdp_clk_ctrl(int enable, int isr);
+void mdss_mdp_clk_ctrl(int enable);
+
 int mdss_dsi_cmdlist_commit(struct mdss_dsi_ctrl_pdata *ctrl, int from_mdp)
 {
 	struct dcs_cmd_req *req;
@@ -1636,7 +1637,7 @@ int mdss_dsi_cmdlist_commit(struct mdss_dsi_ctrl_pdata *ctrl, int from_mdp)
 
 #ifndef CONFIG_LCD_FORCE_VIDEO_MODE
 	if (ctrl->panel_mode == DSI_CMD_MODE)
-		mdss_mdp_clk_ctrl(1, false);
+		mdss_mdp_clk_ctrl(1);
 #endif
 	if (mdss_get_sd_client_cnt())
 		return -EPERM;
@@ -1713,7 +1714,7 @@ need_lock:
 	mutex_unlock(&ctrl->cmd_mutex);
 #ifndef CONFIG_LCD_FORCE_VIDEO_MODE
 	if (ctrl->panel_mode == DSI_CMD_MODE)
-		mdss_mdp_clk_ctrl(0, false);
+		mdss_mdp_clk_ctrl(0);
 #endif
 	pr_debug("%s : -- \n",__func__);
 

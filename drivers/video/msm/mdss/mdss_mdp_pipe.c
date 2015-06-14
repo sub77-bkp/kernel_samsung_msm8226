@@ -714,7 +714,7 @@ static bool mdss_mdp_check_pipe_in_use(struct mdss_mdp_pipe *pipe)
 	else
 		stage_off_mask = stage_off_mask << (3 * pipe->num);
 
-	mdss_mdp_clk_ctrl(MDP_BLOCK_POWER_ON, false);
+	mdss_mdp_clk_ctrl(MDP_BLOCK_POWER_ON);
 	for (i = 0; i < mdata->nctl; i++) {
 		ctl = mdata->ctl_off + i;
 		if (!ctl || !ctl->ref_cnt)
@@ -731,7 +731,7 @@ static bool mdss_mdp_check_pipe_in_use(struct mdss_mdp_pipe *pipe)
 			BUG();
 		}
 	}
-	mdss_mdp_clk_ctrl(MDP_BLOCK_POWER_OFF, false);
+	mdss_mdp_clk_ctrl(MDP_BLOCK_POWER_OFF);
 
 	return in_use;
 }

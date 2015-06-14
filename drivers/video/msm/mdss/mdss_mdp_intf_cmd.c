@@ -999,7 +999,7 @@ int mdss_mdp_cmd_stop(struct mdss_mdp_ctl *ctl)
 
 	if (ctl->num == 0) {
 		ret = mdss_mdp_ctl_intf_event(ctl, MDSS_EVENT_BLANK, NULL);
-		WARN(ret, "intf %d unblank error (%d)\n", ctl->intf_num, ret);l
+		WARN(ret, "intf %d unblank error (%d)\n", ctl->intf_num, ret);
 
 		ret = mdss_mdp_ctl_intf_event(ctl, MDSS_EVENT_PANEL_OFF, NULL);
 		WARN(ret, "intf %d unblank error (%d)\n", ctl->intf_num, ret);

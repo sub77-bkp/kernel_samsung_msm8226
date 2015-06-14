@@ -108,15 +108,10 @@ static int mdss_dsi_regulator_init(struct platform_device *pdev)
 
 	dsi_drv = &(ctrl_pdata->shared_pdata);
 
-	pr_info("%s: vregn(%d)\n", __func__,
-		ctrl_pdata->power_data.num_vreg);
-
-	if (ctrl_pdata->power_data.num_vreg > 0) { // ctrl->pdata = 0
-		/* vdd, vddio, vdda */
 	for (i = 0; !rc && (i < DSI_MAX_PM); i++) {
 		rc = msm_dss_config_vreg(&pdev->dev,
-			ctrl_pdata->power_data.vreg_config,
-			ctrl_pdata->power_data.num_vreg, 1);
+			ctrl_pdata->power_data[i].vreg_config,
+			ctrl_pdata->power_data[i].num_vreg, 1);
 		if (rc)
 			pr_err("%s: failed to init vregs for %s\n",
 				__func__, __mdss_dsi_pm_name(i));
@@ -169,7 +164,6 @@ static int mdss_dsi_regulator_init(struct platform_device *pdev)
 		regulator_set_voltage(ctrl_pdata->lcd_1p8_vreg, 1800000, 1800000);
 		usleep_range(10000, 10000);
 #endif
-	}
 
 	return rc;
 }
@@ -184,7 +178,7 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 	if (pdata == NULL) {
 		pr_err("%s: Invalid input data\n", __func__);
 		return -EINVAL;
-                goto error
+		goto error;
 	}
 
 #if defined(CONFIG_GET_LCD_PCD_DETECTED)
@@ -203,10 +197,10 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 		pr_debug("[ALPM_DEBUG]%s, LDO control, enable : %d\n",
 					__func__, enable);
 	}
+
 	ctrl_pdata = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
-	pr_info("%s: enable=%d vregn(%d)\n", __func__,
-		enable, ctrl_pdata->power_data.num_vreg);
+	pr_debug("%s: enable=%d\n", __func__, enable);
 
 	/*
 	 * If a dynamic mode switch is pending, the regulators should not
@@ -318,37 +312,31 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 		usleep_range(5000, 5000);
 #endif
 
-
-		if (ctrl_pdata->power_data.num_vreg > 0) {
-
-			for (i = 0; i < DSI_MAX_PM; i++) {
-				/*
-				 * Core power module will be enabled when the
-				 * clocks are enabled
-				 */
-				if (DSI_CORE_PM == i)
-					continue;
-				ret = msm_dss_enable_vreg(
-					ctrl_pdata->power_data[i].vreg_config,
-					ctrl_pdata->power_data[i].num_vreg, 1);
-				if (ret) {
-					pr_err("%s: failed to enable vregs for %s\n",
-						__func__, __mdss_dsi_pm_name(i));
-					goto error_enable;
-				}
+		for (i = 0; i < DSI_MAX_PM; i++) {
+			/*
+			 * Core power module will be enabled when the
+			 * clocks are enabled
+			 */
+			if (DSI_CORE_PM == i)
+				continue;
+			ret = msm_dss_enable_vreg(
+				ctrl_pdata->power_data[i].vreg_config,
+				ctrl_pdata->power_data[i].num_vreg, 1);
+			if (ret) {
+				pr_err("%s: failed to enable vregs for %s\n",
+					__func__, __mdss_dsi_pm_name(i));
+				goto error_enable;
 			}
+		}
 
-			if (ctrl_pdata->panel_extra_power){
-				if (mdss_dsi_pinctrl_set_state(ctrl_pdata, true))
-					pr_debug("extra power enable: pinctrl not enabled\n");
+		if (ctrl_pdata->panel_extra_power){
 
-				ret = ctrl_pdata->panel_extra_power(pdata,1);
+			ret = ctrl_pdata->panel_extra_power(pdata,1);
 
-				if (ret) {
-					pr_err("%s: Failed to enable extra power.rc=%d\n",
-						__func__, ret);
-					return ret;
-				}
+			if (ret) {
+				pr_err("%s: Failed to enable extra power.rc=%d\n",
+					__func__, ret);
+				goto error;
 			}
 		}
 #if defined(CONFIG_FB_MSM_MIPI_JDI_TFT_VIDEO_FULL_HD_PT_PANEL)
@@ -376,51 +364,47 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 
 		ctrl_pdata->panel_reset(pdata, 0);
 
-		if (ctrl_pdata->power_data.num_vreg > 0) {
+		if (ctrl_pdata->panel_extra_power){
 
-			if (ctrl_pdata->panel_extra_power){
-				if (mdss_dsi_pinctrl_set_state(ctrl_pdata, true))
-					pr_debug("extra power disable: pinctrl not enabled\n");
+			  ret = ctrl_pdata->panel_extra_power(pdata,0);
 
-				  ret = ctrl_pdata->panel_extra_power(pdata,0);
-
-				if (ret) {
-					pr_err("%s: Failed to disable extra power.rc=%d\n",
-						__func__, ret);
-							return ret;
-				}
+			if (ret) {
+				pr_err("%s: Failed to disable extra power.rc=%d\n",
+					__func__, ret);
+				goto error;
 			}
+		}
 #if defined(CONFIG_FB_MSM_MDSS_TC_DSI2LVDS_WXGA_PANEL)
-			regulator_set_optimum_mode(ctrl_pdata->iovdd_vreg, 100);
-			regulator_disable(ctrl_pdata->iovdd_vreg);
-			mdelay(1);
+		regulator_set_optimum_mode(ctrl_pdata->iovdd_vreg, 100);
+		regulator_disable(ctrl_pdata->iovdd_vreg);
+		mdelay(1);
 #elif defined(CONFIG_FB_MSM_MIPI_MAGNA_OCTA_VIDEO_WXGA_PT_DUAL_PANEL)
-			if (regulator_is_enabled(ctrl_pdata->lcd_3p0_vreg)) {
-				ret = regulator_disable(ctrl_pdata->lcd_3p0_vreg);
-				if (ret) {
-					pr_err("disable lcd_3p0_vreg failed, rc=%d\n", ret);
-					return -ENODEV;
-				} else
-					pr_info("%s : lcd_3p0 regulator disable!!\n", __func__);
-			}
-			if (regulator_is_enabled(ctrl_pdata->lcd_1p8_vreg)) {
-				ret = regulator_disable(ctrl_pdata->lcd_1p8_vreg);
-				if (ret) {
-					pr_err("disable lcd_1p8_vreg failed, rc=%d\n", ret);
-					return -ENODEV;
-				} else
-					pr_info("%s : lcd_1p8 regulator disable!!\n", __func__);
-			}
+		if (regulator_is_enabled(ctrl_pdata->lcd_3p0_vreg)) {
+			ret = regulator_disable(ctrl_pdata->lcd_3p0_vreg);
+			if (ret) {
+				pr_err("disable lcd_3p0_vreg failed, rc=%d\n", ret);
+				return -ENODEV;
+			} else
+				pr_info("%s : lcd_3p0 regulator disable!!\n", __func__);
+		}
+		if (regulator_is_enabled(ctrl_pdata->lcd_1p8_vreg)) {
+			ret = regulator_disable(ctrl_pdata->lcd_1p8_vreg);
+			if (ret) {
+				pr_err("disable lcd_1p8_vreg failed, rc=%d\n", ret);
+				return -ENODEV;
+			} else
+				pr_info("%s : lcd_1p8 regulator disable!!\n", __func__);
+		}
 #endif
 
 		if (mdss_dsi_pinctrl_set_state(ctrl_pdata, false))
 			pr_debug("reset disable: pinctrl not enabled\n");
 
-			for (i = DSI_MAX_PM - 1; i >= 0; i--) {
-				/*
-				 * Core power module will be disabled when the
-				 * clocks are disabled
-			 	*/
+		for (i = DSI_MAX_PM - 1; i >= 0; i--) {
+			/*
+			 * Core power module will be disabled when the
+			 * clocks are disabled
+			*/
 				if (DSI_CORE_PM == i)
 					continue;
 				ret = msm_dss_enable_vreg(
@@ -429,15 +413,11 @@ static int mdss_dsi_panel_power_on(struct mdss_panel_data *pdata, int enable)
 				if (ret)
 					pr_err("%s: failed to disable vregs for %s\n",
 						__func__, __mdss_dsi_pm_name(i));
-					return ret;
-				}
-			}
 		}
 
 	}
 
 	pr_debug("%s: --\n", __func__);
-	return ret;
 
 error_enable:
 	if (ret) {
@@ -446,6 +426,10 @@ error_enable:
 				ctrl_pdata->power_data[i].vreg_config,
 				ctrl_pdata->power_data[i].num_vreg, 0);
 	}
+
+error:
+	return ret;
+
 }
 
 static void mdss_dsi_put_dt_vreg_data(struct device *dev,
